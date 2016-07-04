@@ -8,52 +8,62 @@
 #include <QColor>
 
 namespace Ui {
-  class MainWindow;
+class MainWindow;
 }
 
 class MainWindow : public QMainWindow
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow();
+    explicit MainWindow(QWidget *parent = 0);
+    ~MainWindow();
 
 private:
-  bool Pressed;
-  QPoint lastPos, currentPos;
+    //**************************
+    //!Drawing block
+    enum primitives {Line, Rectangle, Ellipse};
+    int currentPrimitive;
 
-  int thickness;
-  QColor color;
+    bool Pressed;
+    QPoint lastPos, currentPos;
 
-  Ui::MainWindow *ui;
+    int thickness;
+    QColor color;
 
-  void create_Actions();
-  void create_Menus();
+    //**************************
+    //! Window block
 
-  QMenu *fileMenu;
-  QMenu *lineMenu;
+    Ui::MainWindow *ui;
 
-  QActionGroup *lineActionGroup;
-  QAction *openAct;
-  QAction *saveAsAct;
-  QAction *exitAct;
-  QAction *lineWidthAct;
-  QAction *lineColorAct;
+    void create_Actions();
+    void create_Menus();
+
+    QMenu *fileMenu;
+    QMenu *lineMenu;
+
+    QActionGroup *lineActionGroup;
+    QAction *openAct;
+    QAction *saveAsAct;
+    QAction *exitAct;
+    QAction *lineWidthAct;
+    QAction *lineColorAct;
 
 private slots:
-  void openFile();
-  bool saveFile();
-  void lineColor();
-  void lineWidth();
- // void changeLine();
+    void openFile();
+    bool saveFile();
+    void lineColor();
+    void lineWidth();
+    void changePrimitive(int primitive);
 
+
+    void on_comboBox_activated(const QString &arg1);
 
 protected:
-  void paintEvent(QPaintEvent *event);
-  void mousePressEvent(QMouseEvent *event);
-  void mouseMoveEvent(QMouseEvent *event);
-  void mouseReleaseEvent(QMouseEvent *event);
+    void paintEvent(QPaintEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 };
 
 #endif // MAINWINDOW_H
