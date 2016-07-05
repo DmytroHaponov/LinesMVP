@@ -141,47 +141,41 @@ void MainWindow::create_Menus()
 void MainWindow::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-    QPen linePen(color);
-    linePen.setWidth(thickness);
-    painter.setPen(linePen);
+
     //painter.drawImage(QPoint(0, 0), theImage);
     if (paintQueue.isEmpty()){qDebug()<<"nothing to paint"; return;}
-qDebug()<<"size of queue is "<<paintQueue.size();
-    QPair<int, QPair< QPoint, QPoint> > tempPair;
-    foreach (tempPair, paintQueue)
+    qDebug()<<"size of queue is "<<paintQueue.size();
+
+    ShapeToDraw each;
+    foreach (each, paintQueue)
     {
-/*
-        qDebug()<<"element.first == "<<tempPair.first;
-         qDebug()<<"element.second.first.X == "<<tempPair.second.first.x();
-         qDebug()<<"element.second.first.Y == "<<tempPair.second.first.y();
-         qDebug()<<"element.second.second.X == "<<tempPair.second.second.x();
-         qDebug()<<"element.second.second.Y == "<<tempPair.second.second.y();
-*/
-        switch (tempPair.first)
+        QPen linePen(each.color);
+        linePen.setWidth(each.thickness);
+        painter.setPen(linePen);
+        switch (each.currentPrimitive)
         {
-        case      Line: painter.drawLine(tempPair.second.first, tempPair.second.second); break;
+        case      Line: painter.drawLine(each.lastPos, each.currentPos); break;
         case Rectangle:
         {
-            QRect rec(tempPair.second.first, tempPair.second.second);
+            QRect rec(each.lastPos, each.currentPos);
             painter.drawRect(rec); break;
         }
         case   Ellipse:
         {
 
-            QRect rec(tempPair.second.first, tempPair.second.second);
+            QRect rec(each.lastPos, each.currentPos);
             painter.drawEllipse(rec); break;
         }
-        default: painter.drawLine(tempPair.second.first, tempPair.second.second); break;
+        default: painter.drawLine(each.lastPos, each.currentPos); break;
         }
     }
-
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     Pressed = true;
     lastPos = event->pos();
-    qDebug()<<"PressEvent "<<lastPos;
+    //qDebug()<<"PressEvent "<<lastPos;
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
@@ -193,16 +187,16 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
         currentPos = event->pos();
 
-        QPair<QPoint, QPoint> coordinates(lastPos, currentPos);
-//        qDebug()<<"moveEvent coordinates: LastPos is "<<coordinates.first.x()<<"   "<<coordinates.first.y()
-//                <<" currentPos is "<<coordinates.second.x()<<"   "<<coordinates.second.y();
-        QPair<int, QPair<QPoint, QPoint> > elemForDraw(currentPrimitive, coordinates);
-//        qDebug()<<"primitive from pair: "<<elemForDraw.first;
+        ShapeToDraw tempShape;
+        tempShape.color = color;
+        tempShape.currentPos = currentPos;
+        tempShape.currentPrimitive = currentPrimitive;
+        tempShape.lastPos = lastPos;
+        tempShape.thickness = thickness;
 
+        paintQueue.push_back(tempShape);
 
-        paintQueue.push_back(elemForDraw);
-
-        if ((event->buttons() & Qt::LeftButton) && lastPos != QPoint(-1, -1))
+        if ((event->buttons() & Qt::LeftButton) /*&& lastPos != QPoint(-1, -1)*/)
         {
 
             this->update();

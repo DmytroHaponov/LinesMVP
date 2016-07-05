@@ -27,7 +27,17 @@ private:
     //!Drawing block
     enum primitives {Line, Rectangle, Ellipse};
     int currentPrimitive;
-    QQueue< QPair<int, QPair< QPoint, QPoint> > > paintQueue;
+
+    //QQueue< QPair<int, QPair< QPoint, QPoint> > > paintQueue;
+    struct ShapeToDraw
+    {
+        QColor color;
+        int thickness, currentPrimitive;
+        QPoint lastPos, currentPos;
+    };
+
+    QQueue<ShapeToDraw> paintQueue;
+
     int countOfShapes;
     bool Pressed, Moved;
     QPoint lastPos, currentPos;
