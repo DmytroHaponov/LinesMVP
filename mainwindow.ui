@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QComboBox" name="comboBox">
+   <widget class="QComboBox" name="SelectPrimitiveBox">
     <property name="geometry">
      <rect>
       <x>700</x>
@@ -38,11 +38,16 @@
       <string>Ellipse</string>
      </property>
     </item>
+    <item>
+     <property name="text">
+      <string>PENCIL</string>
+     </property>
+    </item>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>690</x>
+      <x>700</x>
       <y>10</y>
       <width>111</width>
       <height>17</height>
@@ -68,7 +73,7 @@
      <x>0</x>
      <y>0</y>
      <width>799</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-07-03T22:28:18
+# Project created by Haponov Dmytro
 #
 #-------------------------------------------------
 
@@ -13,10 +13,8 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    paintarea.cpp
+        mainwindow.cpp
 
-HEADERS  += mainwindow.h \
-    paintarea.h
+HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui

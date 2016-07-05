@@ -40,6 +40,7 @@ private:
 
     int countOfShapes;
     bool Pressed, Moved;
+    bool Pencil;
     QPoint lastPos, currentPos;
 
     int thickness;
@@ -67,20 +68,21 @@ private:
     QAction *lineColorAct;
 
 private slots:
-    void openFile();
-    bool saveFile();
+   // void openFile();
+    //bool saveFile();
     void lineColor();
     void lineWidth();
     void changePrimitive(int primitive);
 
+    void on_SelectPrimitiveBox_activated(const QString &arg1);
 
-    void on_comboBox_activated(const QString &arg1);
+    void on_checkBox_toggled(bool checked);
 
 protected:
-    void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *);
 };
 
 #endif // MAINWINDOW_H
