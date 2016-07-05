@@ -6,6 +6,9 @@
 #include <QActionGroup>
 
 #include <QColor>
+#include <QImage>
+
+#include <QPair>
 
 namespace Ui {
 class MainWindow;
@@ -24,13 +27,17 @@ private:
     //!Drawing block
     enum primitives {Line, Rectangle, Ellipse};
     int currentPrimitive;
-
+QQueue< QPair<int, QPair< QPoint, QPoint> > > paintQueue;
+int countOfShapes;
     bool Pressed;
     QPoint lastPos, currentPos;
 
     int thickness;
     QColor color;
+    QPainter painter;
+    QPen linePen;
 
+QImage image;
     //**************************
     //! Window block
 

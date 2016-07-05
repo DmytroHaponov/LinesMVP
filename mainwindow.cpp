@@ -9,6 +9,9 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
+    //!----------------------------------------------------
+    countOfShapes(0),
+    //!----------------------------------------------------
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -133,11 +136,6 @@ void MainWindow::create_Menus()
     lineMenu = menuBar()->addMenu(tr("&Line"));
     lineMenu->addAction(lineColorAct);
     lineMenu->addAction(lineWidthAct);
-
-    //!
-    connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openFile()));
-
-
 }
 
 void MainWindow::paintEvent(QPaintEvent *event)
@@ -147,48 +145,65 @@ void MainWindow::paintEvent(QPaintEvent *event)
     linePen.setWidth(thickness);
     painter.setPen(linePen);
     //painter.drawImage(QPoint(0, 0), theImage);
-    switch (currentPrimitive)
+    if (paintQueue.isEmpty()){qDebug()<<"nothing to paint"; return;}
+qDebug()<<"size of queue is "<<paintQueue.size();
+    QPair<int, QPair< QPoint, QPoint> > tempPair;
+    foreach (tempPair, paintQueue)
     {
-    case      Line: painter.drawLine(lastPos, currentPos); break;
-    case Rectangle:
-    {
-        /*QPoint point2, point3;
-        point2.setX(currentPos.x());
-        point2.setY(lastPos.y());
-        point3.setX(lastPos.x());
-        point3.setY(currentPos.y());*/
-        QRect rec(lastPos, /*point2, point3,*/ currentPos);
-        painter.drawRect(rec); break;
+/*
+        qDebug()<<"element.first == "<<tempPair.first;
+         qDebug()<<"element.second.first.X == "<<tempPair.second.first.x();
+         qDebug()<<"element.second.first.Y == "<<tempPair.second.first.y();
+         qDebug()<<"element.second.second.X == "<<tempPair.second.second.x();
+         qDebug()<<"element.second.second.Y == "<<tempPair.second.second.y();
+*/
+        switch (tempPair.first)
+        {
+        case      Line: painter.drawLine(tempPair.second.first, tempPair.second.second); break;
+        case Rectangle:
+        {
+            QRect rec(tempPair.second.first, tempPair.second.second);
+            painter.drawRect(rec); break;
+        }
+        case   Ellipse:
+        {
+
+            QRect rec(tempPair.second.first, tempPair.second.second);
+            painter.drawEllipse(rec); break;
+        }
+        default: painter.drawLine(tempPair.second.first, tempPair.second.second); break;
+        }
     }
-    case   Ellipse:
-    {
-        /*QPoint point2, point3;
-        point2.setX(currentPos.x());
-        point2.setY(lastPos.y());
-        point3.setX(lastPos.x());
-        point3.setY(currentPos.y());*/
-        QRect rec(lastPos,/*point2, point3,*/ currentPos);
-        painter.drawEllipse(rec); break;
-    }
-    default: painter.drawLine(lastPos, currentPos); break;
-    }
+
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     Pressed = true;
     lastPos = event->pos();
-    //qDebug()<<"lastPos is "<<lastPos;
+    qDebug()<<"PressEvent "<<lastPos;
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
     if(Pressed)
     {
-        //QPainter painter(this);
+        if (paintQueue.size() > (countOfShapes+1)) paintQueue.pop_back();
+
         currentPos = event->pos();
+
+        QPair<QPoint, QPoint> coordinates(lastPos, currentPos);
+//        qDebug()<<"moveEvent coordinates: LastPos is "<<coordinates.first.x()<<"   "<<coordinates.first.y()
+//                <<" currentPos is "<<coordinates.second.x()<<"   "<<coordinates.second.y();
+        QPair<int, QPair<QPoint, QPoint> > elemForDraw(currentPrimitive, coordinates);
+//        qDebug()<<"primitive from pair: "<<elemForDraw.first;
+
+
+        paintQueue.push_back(elemForDraw);
+
         if ((event->buttons() & Qt::LeftButton) && lastPos != QPoint(-1, -1))
         {
+
             this->update();
         }
     }
@@ -196,12 +211,21 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 {
-    Pressed = false;
+    if (Pressed)
+    {
+        ++countOfShapes;
+        qDebug()<<"countOfShapes is "<<countOfShapes;
+        Pressed = false;
+    }
+    /*
+    QRect rec(lastPos, currentPos);
+    this->update(rec);
+    */
 }
 
 void MainWindow::on_comboBox_activated(const QString &arg1)
 {
-    qDebug()<<"comboBox says "<<arg1;
+    //qDebug()<<"comboBox says "<<arg1;
     if (arg1== "Line") {changePrimitive(0);}
     if (arg1== "Rectangle") {changePrimitive(1);}
     if (arg1== "Ellipse") {changePrimitive(2);}
