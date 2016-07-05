@@ -27,9 +27,9 @@ private:
     //!Drawing block
     enum primitives {Line, Rectangle, Ellipse};
     int currentPrimitive;
-QQueue< QPair<int, QPair< QPoint, QPoint> > > paintQueue;
-int countOfShapes;
-    bool Pressed;
+    QQueue< QPair<int, QPair< QPoint, QPoint> > > paintQueue;
+    int countOfShapes;
+    bool Pressed, Moved;
     QPoint lastPos, currentPos;
 
     int thickness;
@@ -37,7 +37,7 @@ int countOfShapes;
     QPainter painter;
     QPen linePen;
 
-QImage image;
+    QImage image;
     //**************************
     //! Window block
 

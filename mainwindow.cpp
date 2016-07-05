@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     thickness = 3;
     color = Qt::blue;
-    Pressed = false;
+    Pressed = false; Moved = false;
     currentPrimitive= 0;
 
     lastPos.setX(0);
@@ -188,6 +188,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
     if(Pressed)
     {
+        Moved = true;
         if (paintQueue.size() > (countOfShapes+1)) paintQueue.pop_back();
 
         currentPos = event->pos();
@@ -211,12 +212,14 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (Pressed)
+    if (Pressed && Moved)
     {
         ++countOfShapes;
         qDebug()<<"countOfShapes is "<<countOfShapes;
-        Pressed = false;
+
     }
+    Pressed = false;
+    Moved = false;
     /*
     QRect rec(lastPos, currentPos);
     this->update(rec);
