@@ -95,7 +95,7 @@ void PaintArea::print()
 #endif // QT_NO_PRINTER
 }
 
-void PaintArea::paintEvent(QPaintEvent *event )
+void PaintArea::paintEvent(QPaintEvent * /* event */)
 {
 
 QPainter painter(this);
@@ -127,10 +127,6 @@ QPainter painter(this);
         default: painter.drawLine(each.lastPos, each.currentPos); break;
         }
     }
-//  QPainter painter1(this);
-// // QRect dirtyRect = event->rect();
-//      //painter1.drawImage(dirtyRect, image, dirtyRect);
-//  painter1.drawImage(QPoint(0,0), image);
 }
 
 void PaintArea::mousePressEvent(QMouseEvent *event)
@@ -208,7 +204,7 @@ void PaintArea::mouseReleaseEvent(QMouseEvent * /* event */ )
     }
   Pressed = false;
   Moved = false;
- // this->update();
+  this->update();
 }
 
 void PaintArea::resizeEvent(QResizeEvent *event)

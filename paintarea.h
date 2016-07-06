@@ -36,7 +36,7 @@ protected:
   void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
   void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
   void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-  void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+  void paintEvent(QPaintEvent *) Q_DECL_OVERRIDE;
   void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 
 private:

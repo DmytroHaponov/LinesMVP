@@ -79,6 +79,24 @@ void MainWindow::chooseLine()
   paintArea->changePrimitive(0); paintArea->setPencil(false);
   qDebug()<<"Line chosen";
 }
+
+void MainWindow::chooseRect()
+{
+  paintArea->changePrimitive(1); paintArea->setPencil(false);
+  qDebug()<<"Rect chosen";
+}
+
+void MainWindow::chooseEllipse()
+{
+  paintArea->changePrimitive(2); paintArea->setPencil(false);
+  qDebug()<<"Ellipse chosen";
+}
+
+void MainWindow::choosePencil()
+{
+  paintArea->changePrimitive(-1); paintArea->setPencil(true);
+  qDebug()<<"Pencil chosen";
+}
 /*
 void MainWindow::changePrimitive(int primitive)
 {
@@ -87,17 +105,6 @@ void MainWindow::changePrimitive(int primitive)
 */
 void MainWindow::create_Actions()
 {
-  //  openAct = new QAction(tr("&Open..."), this);
-  //  openAct->setShortcuts(QKeySequence::Open);
-  //  connect(openAct, SIGNAL(triggered()), this, SLOT(openFile()));
-
-  //  saveAsAct = new QAction(tr("&Save As..."), this);
-  //  saveAsAct->setShortcuts(QKeySequence::SaveAs);
-  //  connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveFile()));
-
-  //  exitAct = new QAction(tr("&Exit"), this);
-  //  exitAct->setShortcuts(QKeySequence::Quit);
-  //  connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
   openAct = new QAction(tr("&Open..."), this);
   openAct->setShortcuts(QKeySequence::Open);
   connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
@@ -125,47 +132,52 @@ void MainWindow::create_Actions()
   clearScreenAct->setShortcut(tr("Ctrl+L"));
   connect(clearScreenAct, SIGNAL(triggered()), paintArea, SLOT(clearImage()));
 
+  toolsGroup = new QActionGroup(this);
 
   chooseLineAct = new QAction(tr("&Choose Line"), this);
   connect(chooseLineAct, SIGNAL(triggered(bool)), this, SLOT(chooseLine()));
-  /*
-  lineColorAct = new QAction(tr("&Line Color..."), this);
-  connect(lineColorAct, SIGNAL(triggered()), this, SLOT(lineColor()));
-
-  lineWidthAct = new QAction(tr("&Line Width..."), this);
-  connect(lineWidthAct, SIGNAL(triggered()), this, SLOT(lineWidth()));
-  */
+  //chooseLineAct->setCheckable(true);
+  chooseRectAct = new QAction(tr("&Choose Rectangular"), this);
+  connect(chooseRectAct, SIGNAL(triggered(bool)), this, SLOT(chooseRect()));
+  //chooseRectAct->setCheckable(true);
+  chooseEllipseAct = new QAction(tr("&Choose Ellipse"), this);
+  connect(chooseEllipseAct, SIGNAL(triggered(bool)), this, SLOT(chooseEllipse()));
+  //chooseEllipseAct->setCheckable(true);
+  choosePencilAct = new QAction(tr("&Choose Pencil"), this);
+  connect(choosePencilAct, SIGNAL(triggered(bool)), this, SLOT(choosePencil()));
+  //choosePencilAct->setCheckable(true);
+  toolsGroup->addAction(chooseLineAct);
+    toolsGroup->addAction(chooseRectAct);
+      toolsGroup->addAction(chooseEllipseAct);
+        toolsGroup->addAction(choosePencilAct);
 }
 
 void MainWindow::create_Menus()
 {
-  //  fileMenu = menuBar()->addMenu(tr("&File"));
-  //  fileMenu->addAction(openAct);
-  //  fileMenu->addAction(saveAsAct);
-  //  fileMenu->addSeparator();
-  //  fileMenu->addAction(exitAct);
   saveAsMenu = new QMenu(tr("&Save As"), this);
   foreach (QAction *action, saveAsActs)
     saveAsMenu->addAction(action);
 
-  fileMenu = new QMenu(tr("&File"), this);
+  fileMenu = menuBar()->addMenu(tr("&File"));
   fileMenu->addAction(openAct);
   fileMenu->addMenu(saveAsMenu);
   fileMenu->addAction(printAct);
 
   toolMenu = menuBar()->addMenu(tr("&Tools"));
   toolMenu->addAction(chooseLineAct);
-  //toolMenu->addAction(brushWidthAct);
+  toolMenu->addAction(chooseRectAct);
+  toolMenu->addAction(chooseEllipseAct);
+    toolMenu->addAction(choosePencilAct);
   toolMenu->addSeparator();
 
-  optionMenu = new QMenu(tr("&Tools Option"), this);
+  optionMenu = menuBar()->addMenu(tr("&Tools Option"));
   optionMenu->addAction(penColorAct);
   optionMenu->addAction(penWidthAct);
   optionMenu->addSeparator();
   optionMenu->addAction(clearScreenAct);
 
-  menuBar()->addMenu(fileMenu);
-  menuBar()->addMenu(optionMenu);
+//  menuBar()->addMenu(fileMenu);
+//  menuBar()->addMenu(optionMenu);
   /*
   lineMenu = menuBar()->addMenu(tr("&Line"));
   lineMenu->addAction(lineColorAct);

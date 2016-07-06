@@ -6,10 +6,7 @@
 #include <QtGui>
 #include <QActionGroup>
 #include "paintarea.h"
-/*
-#include <QColor>
-#include <QImage>
-*/
+
 namespace Ui {
 class MainWindow;
 }
@@ -31,38 +28,12 @@ private slots:
     void lineWidth();
 
     void chooseLine();
+    void chooseRect();
+    void chooseEllipse();
+    void choosePencil();
+
+    void on_SelectPrimitiveBox_activated(const QString &arg1);
 private:
-    //**************************
-    //!Drawing block
-    //!
-    /*
-    enum primitives {Line, Rectangle, Ellipse};
-    int currentPrimitive;
-
-    struct ShapeToDraw
-    {
-        QColor color;
-        int thickness, currentPrimitive;
-        QPoint lastPos, currentPos;
-    };
-
-    QQueue<ShapeToDraw> paintQueue;
-
-    int countOfShapes;
-    bool Pressed, Moved;
-    bool Pencil;
-    QPoint lastPos, currentPos;
-
-    int thickness;
-    QColor color;
-    QPainter painter;
-    QPen linePen;
-
-    QImage image;
-    */
-    //**************************
-    //! Window block
-
     Ui::MainWindow *ui;
 
     void create_Actions();
@@ -85,23 +56,12 @@ private:
         QAction *penWidthAct;
         QAction *printAct;
         QAction *clearScreenAct;
-        QAction *chooseLineAct;
 
-private slots:
-/*
-    // void openFile();
-    //bool saveFile();
-    void lineColor();
-    void lineWidth();
-    */
-    void on_SelectPrimitiveBox_activated(const QString &arg1);
-/*
-protected:
-    void paintEvent(QPaintEvent *);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *);
-    */
+        QActionGroup *toolsGroup;
+        QAction *chooseLineAct;
+        QAction *chooseRectAct;
+        QAction *chooseEllipseAct;
+        QAction *choosePencilAct;
 };
 
 #endif // MAINWINDOW_H
