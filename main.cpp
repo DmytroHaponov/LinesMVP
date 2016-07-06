@@ -1,3 +1,9 @@
+/**
+   main.cpp
+   @author Dmytro Haponov
+   @version 229 6/07/16
+*/
+
 #include "mainwindow.h"
 #include <QApplication>
 

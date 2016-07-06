@@ -1,3 +1,9 @@
+/**
+   paintarea.cpp
+   @author Dmytro Haponov
+   @version 229 6/07/16
+*/
+
 #include "paintarea.h"
 #include <QDebug>
 
@@ -73,6 +79,8 @@ void PaintArea::setPencil(bool pencil)
 void PaintArea::clearImage()
 {
   image.fill(qRgb(255, 255, 255));
+  //clear all the drawn figures after update()
+  paintQueue.clear(); countOfShapes = 0;
   modified = true;
   update();
 }
@@ -95,15 +103,28 @@ void PaintArea::print()
 #endif // QT_NO_PRINTER
 }
 
+void PaintArea::stepBack()
+{
+  if (countOfShapes)
+    {
+      //clear last figure
+      paintQueue.pop_back();
+      --countOfShapes;
+      update();
+    }
+  else qDebug()<<"nothing to step back";
+}
+
 void PaintArea::paintEvent(QPaintEvent * /* event */)
 {
-
-QPainter painter(this);
-
+  //first select widget to paint on it
+  QPainter painter(this);
+  //paint loaded picture and then start drawing figures
   painter.drawImage(QPoint(0, 0), image);
   if (paintQueue.isEmpty()){qDebug()<<"nothing to paint"; return;}
   qDebug()<<"size of queue is "<<paintQueue.size();
-
+  //look through info of each drawn figure to redraw it while moving of mouse with pressed button
+  //it's essential for drawing figures
   ShapeToDraw each;
   foreach (each, paintQueue)
     {
@@ -124,6 +145,7 @@ QPainter painter(this);
             QRect rec(each.lastPos, each.currentPos);
             painter.drawEllipse(rec); break;
           }
+          //default is intended for pencil, which is equal -1
         default: painter.drawLine(each.lastPos, each.currentPos); break;
         }
     }
@@ -138,33 +160,43 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
 
 void PaintArea::mouseMoveEvent(QMouseEvent *event)
 {
+  //ignore mouse movinment with no button pressed on it
   if(Pressed)
     {
       Moved = true;
+      //while moving mouse in order to draw a figure,
+      //each moovement must be drawn and each movement before it must be erased.
+
+      //in order to accomplish this - check for using pencil is done,
+      //and comparing of drawn figures during move with already present figures is done
       if (!Pencil && (paintQueue.size() > (countOfShapes+1))) paintQueue.pop_back();
 
       currentPos = event->pos();
 
+      //filling of the data about figure that is going to be drawn now
       ShapeToDraw tempShape;
       tempShape.color = color;
       tempShape.currentPos = currentPos;
       tempShape.currentPrimitive = currentPrimitive;
       tempShape.lastPos = lastPos;
       tempShape.thickness = thickness;
-
+      //addding this figure to queue of all drawn figures
       paintQueue.push_back(tempShape);
 
       if ((event->buttons() & Qt::LeftButton) /*&& lastPos != QPoint(-1, -1)*/)
         {
           modified = true;
+          //only area of actual drawing is enough to be updated for pencil
           if (Pencil) {update(QRect(lastPos, currentPos)); lastPos = currentPos;}
-          else update();       //this->update();
+          //for all the figures updating all of the window is essential
+          else update();
         }
     }
 }
 
 void PaintArea::mouseReleaseEvent(QMouseEvent * /* event */ )
 {
+  //after figure is drawn on widget - copy it to image
   if (Pressed && Moved && !Pencil)
     {
       ++countOfShapes;

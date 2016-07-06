@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by Haponov Dmytro
+# Project created by Dmytro Haponov
 #
 #-------------------------------------------------
 

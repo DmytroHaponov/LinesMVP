@@ -1,6 +1,11 @@
+/**
+   mainwindow.cpp
+   @author Dmytro Haponov
+   @version 229 6/07/16
+*/
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
 
 #include <QFileDialog>
 #include <QColorDialog>
@@ -14,9 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
   ui->setupUi(this);
   paintArea = new PaintArea;
-  //this->addDockWidget(
   setCentralWidget(paintArea);
-  ui->SelectPrimitiveBox->raise();
   setWindowTitle(tr("Haponov Paint"));
 
   create_Actions();
@@ -46,7 +49,6 @@ void MainWindow::open()
       if (!fileName.isEmpty())
         paintArea->openImage(fileName);
     }
-  //paintArea->update();
 }
 
 void MainWindow::save()
@@ -97,12 +99,7 @@ void MainWindow::choosePencil()
   paintArea->changePrimitive(-1); paintArea->setPencil(true);
   qDebug()<<"Pencil chosen";
 }
-/*
-void MainWindow::changePrimitive(int primitive)
-{
-  currentPrimitive = primitive;
-}
-*/
+
 void MainWindow::create_Actions()
 {
   openAct = new QAction(tr("&Open..."), this);
@@ -136,20 +133,24 @@ void MainWindow::create_Actions()
 
   chooseLineAct = new QAction(tr("&Choose Line"), this);
   connect(chooseLineAct, SIGNAL(triggered(bool)), this, SLOT(chooseLine()));
-  //chooseLineAct->setCheckable(true);
+
   chooseRectAct = new QAction(tr("&Choose Rectangular"), this);
   connect(chooseRectAct, SIGNAL(triggered(bool)), this, SLOT(chooseRect()));
-  //chooseRectAct->setCheckable(true);
+
   chooseEllipseAct = new QAction(tr("&Choose Ellipse"), this);
   connect(chooseEllipseAct, SIGNAL(triggered(bool)), this, SLOT(chooseEllipse()));
-  //chooseEllipseAct->setCheckable(true);
+
   choosePencilAct = new QAction(tr("&Choose Pencil"), this);
   connect(choosePencilAct, SIGNAL(triggered(bool)), this, SLOT(choosePencil()));
-  //choosePencilAct->setCheckable(true);
+
+  stepBackAct = new QAction(tr("&Step Back"), this);
+  stepBackAct->setShortcut(tr("Ctrl+Z"));
+  connect(stepBackAct, SIGNAL(triggered(bool)), paintArea, SLOT(stepBack()));
+
   toolsGroup->addAction(chooseLineAct);
-    toolsGroup->addAction(chooseRectAct);
-      toolsGroup->addAction(chooseEllipseAct);
-        toolsGroup->addAction(choosePencilAct);
+  toolsGroup->addAction(chooseRectAct);
+  toolsGroup->addAction(chooseEllipseAct);
+  toolsGroup->addAction(choosePencilAct);
 }
 
 void MainWindow::create_Menus()
@@ -167,7 +168,7 @@ void MainWindow::create_Menus()
   toolMenu->addAction(chooseLineAct);
   toolMenu->addAction(chooseRectAct);
   toolMenu->addAction(chooseEllipseAct);
-    toolMenu->addAction(choosePencilAct);
+  toolMenu->addAction(choosePencilAct);
   toolMenu->addSeparator();
 
   optionMenu = menuBar()->addMenu(tr("&Tools Option"));
@@ -176,97 +177,9 @@ void MainWindow::create_Menus()
   optionMenu->addSeparator();
   optionMenu->addAction(clearScreenAct);
 
-//  menuBar()->addMenu(fileMenu);
-//  menuBar()->addMenu(optionMenu);
-  /*
-  lineMenu = menuBar()->addMenu(tr("&Line"));
-  lineMenu->addAction(lineColorAct);
-  lineMenu->addAction(lineWidthAct);
-  */
+  historyMenu = menuBar()->addMenu(tr("History"));
+  historyMenu->addAction(stepBackAct);
 }
-
-//void MainWindow::paintEvent(QPaintEvent * /* event */)
-//{
-//  QPainter painter(this);
-
-//  //painter.drawImage(QPoint(0, 0), theImage);
-//  if (paintQueue.isEmpty()){qDebug()<<"nothing to paint"; return;}
-//  //qDebug()<<"size of queue is "<<paintQueue.size();
-
-//  ShapeToDraw each;
-//  foreach (each, paintQueue)
-//    {
-//      QPen linePen(each.color);
-//      linePen.setWidth(each.thickness);
-//      painter.setPen(linePen);
-//      switch (each.currentPrimitive)
-//        {
-//        case      Line: painter.drawLine(each.lastPos, each.currentPos); break;
-//        case Rectangle:
-//          {
-//            QRect rec(each.lastPos, each.currentPos);
-//            painter.drawRect(rec); break;
-//          }
-//        case   Ellipse:
-//          {
-
-//            QRect rec(each.lastPos, each.currentPos);
-//            painter.drawEllipse(rec); break;
-//          }
-//        default: painter.drawLine(each.lastPos, each.currentPos); break;
-//        }
-//    }
-//}
-
-//void MainWindow::mousePressEvent(QMouseEvent *event)
-//{
-//  Pressed = true;
-//  lastPos = event->pos();
-//  //qDebug()<<"PressEvent "<<lastPos;
-//}
-
-//void MainWindow::mouseMoveEvent(QMouseEvent *event)
-//{
-//  if(Pressed)
-//    {
-//      Moved = true;
-//      if (!Pencil && (paintQueue.size() > (countOfShapes+1))) paintQueue.pop_back();
-
-//      currentPos = event->pos();
-
-//      ShapeToDraw tempShape;
-//      tempShape.color = color;
-//      tempShape.currentPos = currentPos;
-//      tempShape.currentPrimitive = currentPrimitive;
-//      tempShape.lastPos = lastPos;
-//      tempShape.thickness = thickness;
-
-//      paintQueue.push_back(tempShape);
-
-//      if ((event->buttons() & Qt::LeftButton) /*&& lastPos != QPoint(-1, -1)*/)
-//        {
-//          if (Pencil) {update(QRect(lastPos, currentPos)); lastPos = currentPos;}
-//          else        this->update();
-//        }
-//    }
-//}
-
-//void MainWindow::mouseReleaseEvent(QMouseEvent * /* event */ )
-//{
-//  if (Pressed && Moved && !Pencil)
-//    {
-//      ++countOfShapes;
-//      //qDebug()<<"countOfShapes is "<<countOfShapes;
-//    }
-//  if (Pressed && Moved && Pencil)
-//    {
-//      countOfShapes = paintQueue.size();
-//      //qDebug()<<"countOfShapes is "<<countOfShapes;
-//    }
-//  Pressed = false;
-//  Moved = false;
-//  this->update();
-//}
 
 bool MainWindow::maybeSave()
 {
@@ -300,19 +213,4 @@ bool MainWindow::saveFile(const QByteArray &fileFormat)
     } else {
       return paintArea->saveImage(fileName, fileFormat.constData());
     }
-}
-/*
-void MainWindow::on_checkBox_toggled(bool checked)
-{
-  paintArea->setPencil(checked);
-  if (!checked) paintArea->changePrimitive(-1);
-}
-*/
-void MainWindow::on_SelectPrimitiveBox_activated(const QString &arg1)
-{
-  qDebug()<<"comboBox says "<<arg1;
-  if (arg1== "Line")      {paintArea->changePrimitive(0); paintArea->setPencil(false);}
-  if (arg1== "Rectangle") {paintArea->changePrimitive(1); paintArea->setPencil(false);}
-  if (arg1== "Ellipse")   {paintArea->changePrimitive(2); paintArea->setPencil(false);}
-  if (arg1 == "PENCIL")   {paintArea->changePrimitive(-1); paintArea->setPencil(true);}
 }
