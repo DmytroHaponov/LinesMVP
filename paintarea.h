@@ -11,9 +11,9 @@
     module responsible for:
   1) loading image to paint on
   2) painting lines, rectangles, ellipses
-                                          and drawing with pencil
-                                                                  of different colors
-                                                                                      and with different width of lines
+                                                      and drawing with pencil
+     of different colors
+     and with different width of lines
   3) saving results of painting
   4) sending picture to printer
   5) clearing all the figures and loaded picture
